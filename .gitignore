@@ -1,0 +1,18 @@
+# ZIP source files (too large, re-downloadable from SEC EDGAR)
+*.zip
+zip/
+
+# Superseded by datapulling.ipynb
+FuzzyMatching.ipynb
+
+# Mac system files
+.DS_Store
+**/.DS_Store
+
+# Claude Code settings
+.claude/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
