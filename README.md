@@ -98,7 +98,15 @@ matched_score100_wide.csv   ← confirmed matches (score = 100), deduplicated
 | `score_partial` | 40% | Handles abbreviations and subset matches |
 | `score_combo` | — | `0.6 × token_sort + 0.4 × partial` — primary ranking score |
 
-Both scores are on a 0–100 scale. **Auto-accept threshold:** `token_sort ≥ 85` AND `partial ≥ 90`.
+Both scores are on a 0–100 scale.
+
+**Decision labels:**
+
+| Label | Condition | Meaning |
+|-------|-----------|---------|
+| `auto_accept` | `score_combo == 100` | Perfect match — used directly in `matched_score100_wide.csv` |
+| `needs_review` | `80 ≤ score_combo < 100` | Strong candidate — worth manual review to expand the dataset |
+| `low_score` | `score_combo < 80` | Too noisy to be reliable — skip |
 
 **Name normalization applied before matching:**
 - Lowercased, ASCII-normalized
@@ -159,10 +167,10 @@ Both scores are on a 0–100 scale. **Auto-accept threshold:** `token_sort ≥ 8
 
 `score_combo = 100` rows are perfect matches — no manual review needed. These feed directly into `matched_score100_wide.csv`.
 
-To expand the dataset, work through scores in the **85–100 range**:
+To expand the dataset, work through `needs_review` rows (**score_combo 80–99**):
 1. Open any `*_review.csv` in Excel or similar — rows are already sorted highest `score_combo` first.
-2. Skip anything at 100 (already captured) and anything below 85 (too noisy to be reliable).
-3. For each row in the 85–99 range: compare `md_organization` vs `sec_best_name`. If correct, note the CIK.
+2. Skip `auto_accept` (already captured) and `low_score` rows (below 80, too noisy).
+3. For each `needs_review` row: compare `md_organization` vs `sec_best_name`. If correct, note the CIK.
 4. Use `score_combo` and `score_partial` together — a high `score_combo` with a low `score_partial` often signals a false positive.
 5. `hint_probably_nontraded = True` rows are likely schools, hospitals, or government entities — skip unless you have reason to believe otherwise.
 
