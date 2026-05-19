@@ -128,7 +128,7 @@ Both scores are on a 0–100 scale.
 | `score_token_sort` | Token sort ratio score (0–100) |
 | `score_partial` | Partial ratio score (0–100) |
 | `score_combo` | Weighted hybrid score (0–100) — **primary sort key for review** |
-| `decision` | `auto_accept` (both thresholds met) or `needs_review` |
+| `decision` | `auto_accept` (score_combo = 100), `needs_review` (80–99), or `low_score` (< 80) |
 | `sec_2nd_name` / `sec_2nd_cik` / `sec_2nd_norm` | Runner-up match for context |
 | `score2_token_sort` / `score2_partial` / `score2_combo` | Runner-up scores |
 
@@ -138,13 +138,13 @@ Both scores are on a 0–100 scale.
 
 **What it is:** Stripped-down versions of the FuzzyResults files for manual validation. One row per unique organization name, all original metadata removed, sorted by `score_combo` descending.
 
-| File | Unique orgs | Auto-accept | Needs review |
-|------|------------|-------------|--------------|
-| `eurepoc_data_review.csv` | 2,112 | 87 | 2,022 |
-| `maryland_incidents_(1)_review.csv` | 13,532 | 605 | 12,927 |
-| `ransomware_live_filtered_review.csv` | 21,968 | 517 | 21,345 |
-| `temple_incidents_review.csv` | 2,072 | 134 | 1,938 |
-| `veris_export_review.csv` | 7,523 | 446 | 7,076 |
+| File | Unique orgs | auto_accept (=100) | needs_review (80–99) | low_score (<80) |
+|------|------------|-------------------|----------------------|-----------------|
+| `eurepoc_data_review.csv` | 2,112 | 67 | 153 | 1,892 |
+| `maryland_incidents_(1)_review.csv` | 13,532 | 397 | 1,413 | 11,722 |
+| `ransomware_live_filtered_review.csv` | 21,945 | 177 | 2,678 | 19,090 |
+| `temple_incidents_review.csv` | 2,072 | 99 | 220 | 1,753 |
+| `veris_export_review.csv` | 7,523 | 323 | 773 | 6,427 |
 
 **Script:** `datapulling.ipynb` — Cell 4.
 
