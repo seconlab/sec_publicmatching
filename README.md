@@ -182,7 +182,7 @@ To expand the dataset, work through `needs_review` rows (**score_combo 80–99**
 
 | Property | Value |
 |----------|-------|
-| Rows | 1,220 |
+| Rows | 1,201 |
 | Columns | 9 |
 
 **How it was built:**
@@ -192,13 +192,13 @@ To expand the dataset, work through `needs_review` rows (**score_combo 80–99**
    - Temple: `Date Began`
    - Ransomware Live: `Discovered`
    - EuRepoC: `start_date`
-   - VERIS: `Year` + `Month` + `Day` (year-only records → no date, kept but not merged)
+   - VERIS: `Year` + `Month` + `Day` columns — year+month+day → exact date; year+month only → 1st of month; year only → January 1st of that year (approximate)
 3. Within each CIK, clustered events using a **7-day window**: if two events for the same company are ≤ 7 days apart, they are treated as the same incident and merged into one row.
 4. Pivoted to wide format: one column per source ID.
 
 **Deduplication stats:**
 - Rows before dedup: 1,359
-- Rows removed by merging: 139
+- Rows removed by merging: 158
 - Multi-source confirmed rows (n_sources ≥ 2): 96
 
 **Columns:**
@@ -207,7 +207,7 @@ To expand the dataset, work through `needs_review` rows (**score_combo 80–99**
 |--------|-------------|
 | `cik` | SEC CIK — links back to `companies_2plus_10k.csv` |
 | `company` | Company name from SEC |
-| `event_date` | Earliest event date in the cluster (`YYYY-MM-DD`), or blank for year-only VERIS records |
+| `event_date` | Earliest event date in the cluster (`YYYY-MM-DD`). VERIS year-only records approximate to `YYYY-01-01`. |
 | `n_sources` | Number of source databases that confirmed this incident |
 | `eurepoc_id` | `name` field from EuRepoC (event description used as ID) |
 | `maryland_id` | `slug` from Maryland Incidents |
@@ -218,5 +218,5 @@ To expand the dataset, work through `needs_review` rows (**score_combo 80–99**
 **Notes:**
 - A non-null value in a source ID column means that source confirmed the incident.
 - Multiple IDs in one cell (separated by `;`) means the 7-day cluster merged multiple records from that source.
-- 146 rows have a blank `event_date` — these are VERIS records where only the year was available. They are valid matches but cannot be date-merged with other sources.
+- VERIS stores dates as separate Year/Month/Day columns. Records with only a year are approximated to January 1st (`YYYY-01-01`) — treat those dates as "sometime in YYYY" rather than a precise date.
 - To filter to incidents confirmed by multiple sources: `n_sources >= 2` gives 96 rows.
